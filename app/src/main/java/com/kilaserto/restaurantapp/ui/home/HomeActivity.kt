@@ -8,8 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kilaserto.restaurantapp.R
-import com.kilaserto.restaurantapp.db.BasketsModel
-import com.kilaserto.restaurantapp.db.DishModel
+import com.kilaserto.restaurantapp.db.CartEntity
 import com.kilaserto.restaurantapp.model.UiDishModel
 import com.kilaserto.restaurantapp.ui.basket.BasketActivity
 import kotlinx.android.synthetic.main.activity_main.*
@@ -29,16 +28,16 @@ class HomeActivity : AppCompatActivity() {
         adapterDish = DishAdapter(object : DishAdapter.DishListener{
             override fun onClickDish(uiDishModel: UiDishModel) {
                 val currentTime: Date = Calendar.getInstance().time
-                val dish = BasketsModel(uiDishModel.dishModel.id_food,currentTime.toString(),uiDishModel.dishModel.id_food,0,1,0 )
+                val dish = CartEntity(uiDishModel.dishEntity.id_food,currentTime.toString(),uiDishModel.dishEntity.id_food,0,1,0 )
                 viewModel.addDishToBasket(dish)
             }
 
             override fun onPlusDish(uiDishModel: UiDishModel) {
-                viewModel.plusQuantityBasketModel(uiDishModel.dishModel.id_food)
+                viewModel.plusQuantityBasketModel(uiDishModel.dishEntity.id_food)
             }
 
             override fun onMinusDish(uiDishModel: UiDishModel) {
-                viewModel.minusQuantityBasketModel(uiDishModel.dishModel.id_food)
+                viewModel.minusQuantityBasketModel(uiDishModel.dishEntity.id_food)
             }
         })
 
@@ -85,7 +84,7 @@ class HomeActivity : AppCompatActivity() {
                 buy_card_view.visibility = View.VISIBLE
                 var allPrice = 0
                 it.forEach {
-                    allPrice += it.dishModel.price_food*it.quantity
+                    allPrice += it.dishEntity.price_food*it.quantity
                 }
                 if(allPrice == 0){
                     buy_card_view.visibility = View.INVISIBLE

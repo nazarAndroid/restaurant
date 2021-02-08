@@ -5,9 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kilaserto.restaurantapp.db.BasketsModel
+import com.kilaserto.restaurantapp.db.CartEntity
 import com.kilaserto.restaurantapp.db.CategoryModel
-import com.kilaserto.restaurantapp.db.DishModel
+import com.kilaserto.restaurantapp.db.DishEntity
 import com.kilaserto.restaurantapp.model.UICategoryModel
 import com.kilaserto.restaurantapp.model.UiDishModel
 import com.kilaserto.restaurantapp.repositories.CategoryRepository
@@ -58,10 +58,10 @@ class HomeViewModel(
 
     }
 
-    fun addDishToBasket(basketsModel: BasketsModel) {
+    fun addDishToBasket(cartEntity: CartEntity) {
 
         viewModelScope.launch(Dispatchers.IO) {
-            cartRepository.basketDao.insert(basketsModel)
+            cartRepository.cartDao.insert(cartEntity)
         }
     }
 
@@ -75,7 +75,7 @@ class HomeViewModel(
         }
     }
 
-    var dishesSource: LiveData<List<DishModel>>? = null
+    var dishesSource: LiveData<List<DishEntity>>? = null
 
     fun onCategoryChanged(position: Int) {
         Log.d("tag", "onCategory changed $position")
@@ -126,7 +126,7 @@ class HomeViewModel(
         categoryRepository.categoriesDao.insert(cat3)
         categoryRepository.categoriesDao.insert(cat4)
 
-        val dish1 = DishModel(
+        val dish1 = DishEntity(
             0,
             1,
             "Борщ",
@@ -143,7 +143,7 @@ class HomeViewModel(
             "Скоро будет!"
         )
         dishRepository.dishDao.insert(dish1)
-        val dish2 = DishModel(
+        val dish2 = DishEntity(
             1,
             2,
             "Суп",
@@ -160,7 +160,7 @@ class HomeViewModel(
             "0"
         )
         dishRepository.dishDao.insert(dish2)
-        val dish3 = DishModel(
+        val dish3 = DishEntity(
             2,
             3,
             "Пюре",
@@ -177,7 +177,7 @@ class HomeViewModel(
             "Скоро будет"
         )
         dishRepository.dishDao.insert(dish3)
-        val dish4 = DishModel(
+        val dish4 = DishEntity(
             3,
             4,
             "Кальмар",
@@ -194,7 +194,7 @@ class HomeViewModel(
             "0"
         )
         dishRepository.dishDao.insert(dish4)
-        val dish5 = DishModel(
+        val dish5 = DishEntity(
             4,
             5,
             "Test",

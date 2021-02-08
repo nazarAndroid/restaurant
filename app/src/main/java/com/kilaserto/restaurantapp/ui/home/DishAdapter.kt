@@ -44,7 +44,7 @@ class DishAdapter(val listener: DishListener) : RecyclerView.Adapter<DishAdapter
 
         fun bind(uiDishModel: UiDishModel) {
             this.uiDishModel = uiDishModel
-            val dishModel = uiDishModel.dishModel
+            val dishModel = uiDishModel.dishEntity
             itemView.title_food.text = dishModel.title_food
             itemView.price_food.text = "${dishModel.price_food} руб."
             itemView.volume_food.text = "${dishModel.volume_food} гр."
@@ -84,7 +84,7 @@ class DishAdapter(val listener: DishListener) : RecyclerView.Adapter<DishAdapter
         init {
             itemView.setOnClickListener {
                 val intent = Intent(itemView.context, DishDetailActivity::class.java)
-                intent.putExtra("dish", uiDishModel.dishModel.id_food)
+                intent.putExtra("dish", uiDishModel.dishEntity.id_food)
                 ContextCompat.startActivity(itemView.context, intent, null)
             }
             itemView.buy_button.setOnLongClickListener {
@@ -96,7 +96,7 @@ class DishAdapter(val listener: DishListener) : RecyclerView.Adapter<DishAdapter
                 listener.onClickDish(uiDishModel)
                 itemView.buy_button.visibility = View.INVISIBLE
                 itemView.buy_const.visibility = View.VISIBLE
-                allMoney = uiDishModel.dishModel.price_food
+                allMoney = uiDishModel.dishEntity.price_food
                 countFood = 1
                 itemView.count_food_text.text = countFood.toString()
 
@@ -104,7 +104,7 @@ class DishAdapter(val listener: DishListener) : RecyclerView.Adapter<DishAdapter
             itemView.plus_button.setOnClickListener {
                 listener.onPlusDish(uiDishModel)
 
-                allMoney += uiDishModel.dishModel.price_food
+                allMoney += uiDishModel.dishEntity.price_food
                 countFood += 1
                 itemView.count_food_text.text = countFood.toString()
 
@@ -115,7 +115,7 @@ class DishAdapter(val listener: DishListener) : RecyclerView.Adapter<DishAdapter
                 itemView.count_food_text.text = countFood.toString()
 
                 countFood -= 1
-                allMoney -= uiDishModel.dishModel.price_food
+                allMoney -= uiDishModel.dishEntity.price_food
                 itemView.count_food_text.text = countFood.toString()
                 if (countFood == 0) {
                     itemView.buy_button.isClickable = true

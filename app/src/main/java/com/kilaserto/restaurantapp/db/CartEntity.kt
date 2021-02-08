@@ -4,8 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 
-@Entity(tableName = "basket_table")
-data class BasketsModel (
+@Entity(tableName = "cart_table")
+data class CartEntity (
     @PrimaryKey
     val id_cart: Int,
     val date_cart: String,

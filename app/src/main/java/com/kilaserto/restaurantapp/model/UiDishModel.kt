@@ -1,8 +1,8 @@
 package com.kilaserto.restaurantapp.model
 
-import com.kilaserto.restaurantapp.db.DishModel
+import com.kilaserto.restaurantapp.db.DishEntity
 
 data class UiDishModel(
-    val dishModel:DishModel,
+    val dishEntity:DishEntity,
     var quantity: Int
 )

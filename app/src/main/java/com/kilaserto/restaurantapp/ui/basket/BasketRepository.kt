@@ -2,36 +2,38 @@ package com.kilaserto.restaurantapp.ui.basket
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
-import com.kilaserto.restaurantapp.db.BasketDao
-import com.kilaserto.restaurantapp.db.BasketsModel
+import com.kilaserto.restaurantapp.db.CartDao
+import com.kilaserto.restaurantapp.db.CartEntity
 
-class BasketRepository(val basketDao: BasketDao) {
-    fun getBasketList() = Transformations.switchMap(basketDao.getAll()) {
-        MutableLiveData<List<BasketsModel>>(it)
+class BasketRepository(val cartDao: CartDao) {
+    fun getBasketList() = Transformations.switchMap(cartDao.getAll()) {
+        MutableLiveData<List<CartEntity>>(it)
     }
 
     fun deleteBasket() {
-        basketDao.deleteAll()
+        cartDao.deleteAll()
     }
 
     fun plusUpdateBasket(idFood: Int) {
-        val basketDish = basketDao.getDishById(idFood)
+        val basketDish = cartDao.getDishById(idFood)
         basketDish.quantity_id_food += 1
-        basketDao.update(basketDish)
+        cartDao.update(basketDish)
     }
 
     fun minusUpdateBasket(idFood: Int) {
-        val basketDish = basketDao.getDishById(idFood)
+        val basketDish = cartDao.getDishById(idFood)
         basketDish.quantity_id_food -= 1
-        basketDao.update(basketDish)
+        cartDao.update(basketDish)
     }
 
     fun deleteDishById(idFood: Int) {
-        basketDao.deleteDishById(idFood)
+        cartDao.deleteDishById(idFood)
     }
 
     fun getDishById(idFood: Int) =
-        basketDao.getDishByIdBasket(idFood)
+        cartDao.getDishByIdBasket(idFood)
 
-    fun checkFoodBasket(idFood: Int) = basketDao.checkFoodOnTable(idFood)
+    fun checkFoodBasket(idFood: Int) = cartDao.checkFoodOnTable(idFood)
+
+    fun getCartItemsWithDish() = cartDao.getCartItemsWithDish()
 }

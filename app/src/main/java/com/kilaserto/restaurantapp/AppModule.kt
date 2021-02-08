@@ -15,8 +15,7 @@ import org.koin.dsl.module
 
 val appModules = module {
     single {
-        Room.databaseBuilder(androidApplication(), AppDatabase::class.java, "database")
-            .build()
+        Room.databaseBuilder(androidApplication(), AppDatabase::class.java, "database").build()
     }
     single { get<AppDatabase>().dishDao() }
     single { get<AppDatabase>().categoriesDao() }

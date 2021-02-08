@@ -66,8 +66,8 @@ class BasketActivity : AppCompatActivity() {
             var allPrice = 0
             allQuantity = 0
             it.forEach {
-                allPrice += it.price_food*it.quantity
-                allQuantity += it.quantity
+                allPrice += it.cost()
+                allQuantity += it.quantity()
             }
             sum_text.text = "Итог " + allPrice.toString() + " руб."
         })

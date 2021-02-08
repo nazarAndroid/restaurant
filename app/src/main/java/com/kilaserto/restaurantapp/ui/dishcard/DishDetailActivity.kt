@@ -5,8 +5,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import com.kilaserto.restaurantapp.R
-import com.kilaserto.restaurantapp.db.BasketsModel
-import com.kilaserto.restaurantapp.db.DishModel
+import com.kilaserto.restaurantapp.db.CartEntity
+import com.kilaserto.restaurantapp.db.DishEntity
 import com.kilaserto.restaurantapp.ui.basket.BasketActivity
 import com.kilaserto.restaurantapp.ui.home.HomeActivity
 import com.sothree.slidinguppanel.SlidingUpPanelLayout
@@ -18,7 +18,7 @@ import java.util.*
 
 class DishDetailActivity : AppCompatActivity() {
     var idFood = 0
-    lateinit var food: DishModel
+    lateinit var food: DishEntity
     var countFood = 1
     private val viewModel: DishCardViewModel by viewModel()
 
@@ -31,7 +31,7 @@ class DishDetailActivity : AppCompatActivity() {
             food = it
             val currentTime: Date = Calendar.getInstance().time
             val dish =
-                BasketsModel(
+                CartEntity(
                     food.id_food,
                     currentTime.toString(),
                     food.id_food,

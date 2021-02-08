@@ -3,7 +3,7 @@ package com.kilaserto.restaurantapp.ui.dishcard
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kilaserto.restaurantapp.db.BasketsModel
+import com.kilaserto.restaurantapp.db.CartEntity
 import com.kilaserto.restaurantapp.repositories.DishRepository
 import com.kilaserto.restaurantapp.ui.basket.BasketRepository
 import kotlinx.coroutines.Dispatchers
@@ -34,13 +34,13 @@ class DishCardViewModel(
         }
     }
 
-    fun addDishToBasket(basketsModel: BasketsModel) {
+    fun addDishToBasket(cartEntity: CartEntity) {
         viewModelScope.launch(Dispatchers.IO) {
-            repository.basketDao.insert(basketsModel)
+            repository.cartDao.insert(cartEntity)
         }
     }
 
-    fun getDishByIdBasket(idFood: Int): LiveData<BasketsModel> {
+    fun getDishByIdBasket(idFood: Int): LiveData<CartEntity> {
         return repository.getDishById(idFood)
     }
     fun checkFood(idFood: Int):LiveData<Boolean>{

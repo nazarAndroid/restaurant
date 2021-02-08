@@ -5,14 +5,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.kilaserto.restaurantapp.R
-import com.kilaserto.restaurantapp.model.UIBasketModel
+import com.kilaserto.restaurantapp.model.CartWithDishItem
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_dish_basket.view.*
 
-class BasketAdapter(val listener: BasketListener) :
+class BasketAdapter(private val listener: BasketListener) :
     RecyclerView.Adapter<BasketAdapter.BasketViewHolder>() {
 
-    private var allBasketDish = ArrayList<UIBasketModel>()
+    private lateinit var allBasketDish: List<CartWithDishItem>
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -35,38 +35,38 @@ class BasketAdapter(val listener: BasketListener) :
 
     class BasketViewHolder(itemView: View, listener: BasketListener) :
         RecyclerView.ViewHolder(itemView) {
-        lateinit var basketsModel: UIBasketModel
+        var foodId: Int = -1
         var countFood = 0
 
-        fun bind(basketsModel: UIBasketModel) {
-            this.basketsModel = basketsModel
-            if (basketsModel.quantity >= 1) {
-                countFood = basketsModel.quantity
-                Picasso.get().load(basketsModel.foto_food).into(itemView.foto_dish)
-                itemView.title_food.text = basketsModel.title_food
-                itemView.price_food.text = basketsModel.price_food.toString()
-                itemView.count_food_text.text = basketsModel.quantity.toString()
+        fun bind(cartItem: CartWithDishItem) {
+            this.foodId = cartItem.dishEntity.id_food
+            if (cartItem.quantity() >= 1) {
+                countFood = cartItem.quantity()
+                Picasso.get().load(cartItem.dishEntity.foto_food).into(itemView.foto_dish)
+                itemView.title_food.text = cartItem.dishEntity.title_food
+                itemView.price_food.text = cartItem.dishEntity.price_food.toString()
+                itemView.count_food_text.text = cartItem.quantity().toString()
             }
         }
 
         init {
             itemView.plus_button.setOnClickListener {
-                listener.onPlusDish(basketsModel.id_food)
+                listener.onPlusDish(foodId)
                 countFood += 1
             }
             itemView.minus_button.setOnClickListener {
-                listener.onMinusDish(basketsModel.id_food)
+                listener.onMinusDish(foodId)
                 itemView.count_food_text.text = countFood.toString()
 
                 countFood -= 1
                 if (countFood == 0) {
-                    listener.onDeleteDishBasket(basketsModel.id_food)
+                    listener.onDeleteDishBasket(foodId)
                 }
             }
         }
     }
 
-    fun setAllBasketDish(basketDishArray: ArrayList<UIBasketModel>) {
+    fun setAllBasketDish(basketDishArray: List<CartWithDishItem>) {
         this.allBasketDish = basketDishArray
         notifyDataSetChanged()
     }

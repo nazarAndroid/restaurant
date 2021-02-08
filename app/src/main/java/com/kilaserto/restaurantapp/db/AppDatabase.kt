@@ -5,12 +5,12 @@ import androidx.room.RoomDatabase
 
 
 @Database(
-    entities = [BasketsModel::class, CategoryModel::class, ChangesComposition::class,
-        DishModel::class, CompositionDish::class], version = 1
+    entities = [CartEntity::class, CategoryModel::class, ChangesComposition::class,
+        DishEntity::class, CompositionDish::class], version = 1
 )
 
 abstract class AppDatabase : RoomDatabase() {
-    abstract fun basketDao(): BasketDao?
+    abstract fun basketDao(): CartDao?
     abstract fun categoriesDao(): CategoriesDao?
     abstract fun changesCompositionDao(): ChangesCompositionDao?
     abstract fun dishDao(): DishDao?

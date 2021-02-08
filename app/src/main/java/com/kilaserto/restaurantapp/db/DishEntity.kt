@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "dish_table")
-data class DishModel(
+data class DishEntity(
     @PrimaryKey
     val id_food: Int,
     val id_category: Int,
