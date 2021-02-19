@@ -52,7 +52,7 @@ class DishDetailActivity : AppCompatActivity() {
 
             val dish1 = viewModel.getDishByIdBasket(food.id_food)
             dish1.observe(this, Observer {
-                countFood = it.quantity_id_food
+                countFood = it?.quantity_id_food ?: 0
                 count_food_text.text = countFood.toString()
             })
 

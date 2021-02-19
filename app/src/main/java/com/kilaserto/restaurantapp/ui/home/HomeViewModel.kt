@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.kilaserto.restaurantapp.db.CartEntity
 import com.kilaserto.restaurantapp.db.CategoryModel
 import com.kilaserto.restaurantapp.db.DishEntity
+import com.kilaserto.restaurantapp.model.DishModel
 import com.kilaserto.restaurantapp.model.UICategoryModel
-import com.kilaserto.restaurantapp.model.UiDishModel
 import com.kilaserto.restaurantapp.repositories.CategoryRepository
 import com.kilaserto.restaurantapp.repositories.DishRepository
 import com.kilaserto.restaurantapp.ui.basket.BasketRepository
@@ -21,12 +21,11 @@ class HomeViewModel(
     private val dishRepository: DishRepository,
     private val categoryRepository: CategoryRepository
 ) : ViewModel() {
-    val mainDishesList: MediatorLiveData<ArrayList<UiDishModel>> = MediatorLiveData()
+    val mainDishesList: MediatorLiveData<ArrayList<DishModel>> = MediatorLiveData()
 
     private var dishCategories = MediatorLiveData<ArrayList<UICategoryModel>>()
     private var localCategories: ArrayList<UICategoryModel> = arrayListOf()
 
-    private val cartItems = cartRepository.getBasketList()
     fun plusQuantityBasketModel(idFood: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             cartRepository.plusUpdateBasket(idFood)
@@ -69,41 +68,15 @@ class HomeViewModel(
 
     fun mainCategories() = dishCategories
 
-    fun insertCategory(categoryModel: CategoryModel) {
-        viewModelScope.launch(Dispatchers.IO) {
-            categoryRepository.insertCategory(categoryModel)
-        }
-    }
-
-    var dishesSource: LiveData<List<DishEntity>>? = null
-
+    var source: LiveData<List<DishModel>>? = null
     fun onCategoryChanged(position: Int) {
         Log.d("tag", "onCategory changed $position")
-        dishesSource?.let {
+        source?.let {
             mainDishesList.removeSource(it)
         }
-
-        mainDishesList.removeSource(cartItems)
-        dishesSource = dishRepository.dishDao.sortDishesByCategoryId(position)
-        mainDishesList.apply {
-            fun update() {
-                val resultArrayList = arrayListOf<UiDishModel>()
-                val dishes = dishesSource?.value ?: return
-                val basketItems = cartItems.value ?: return
-
-                dishes.forEach { dishModel ->
-                    val quantity = basketItems.find {
-                        it.id_food == dishModel.id_food
-                    }?.let {
-                        it.quantity_id_food
-                    } ?: 0
-                    resultArrayList.add(UiDishModel(dishModel, quantity))
-                }
-                value = resultArrayList
-            }
-
-            addSource(dishesSource!!) { update() }
-            addSource(cartItems) { update() }
+        source = dishRepository.dishDao.sortDishesByCategoryId(position)
+        mainDishesList.addSource(source!!) {
+            mainDishesList.value = ArrayList(it)
         }
         localCategories.forEach {
             it.isSelected = false

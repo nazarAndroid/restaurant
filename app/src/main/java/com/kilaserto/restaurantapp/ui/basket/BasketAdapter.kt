@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.card_dish_basket.view.*
 class BasketAdapter(private val listener: BasketListener) :
     RecyclerView.Adapter<BasketAdapter.BasketViewHolder>() {
 
-    private lateinit var allBasketDish: List<CartWithDishItem>
+    private var allBasketDish: List<CartWithDishItem>? = null
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -26,11 +26,12 @@ class BasketAdapter(private val listener: BasketListener) :
     }
 
     override fun getItemCount(): Int {
-        return allBasketDish.size
+        return allBasketDish?.size ?: 0
     }
 
     override fun onBindViewHolder(holder: BasketViewHolder, position: Int) {
-        holder.bind(allBasketDish[position])
+        allBasketDish ?: return
+        holder.bind(allBasketDish!![position])
     }
 
     class BasketViewHolder(itemView: View, listener: BasketListener) :

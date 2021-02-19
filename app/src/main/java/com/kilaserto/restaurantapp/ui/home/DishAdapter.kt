@@ -9,7 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.kilaserto.restaurantapp.R
-import com.kilaserto.restaurantapp.model.UiDishModel
+import com.kilaserto.restaurantapp.model.DishModel
 import com.kilaserto.restaurantapp.ui.dishcard.DishDetailActivity
 import com.kilaserto.restaurantapp.ui.payment.PaymentActivity
 import com.squareup.picasso.Picasso
@@ -18,7 +18,7 @@ import kotlinx.android.synthetic.main.card_dish.view.*
 
 class DishAdapter(val listener: DishListener) : RecyclerView.Adapter<DishAdapter.DishViewHolder>() {
 
-    var allDish = ArrayList<UiDishModel>()
+    var allDish = ArrayList<DishModel>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DishViewHolder {
         val inflater = LayoutInflater.from(parent.context)
@@ -36,31 +36,27 @@ class DishAdapter(val listener: DishListener) : RecyclerView.Adapter<DishAdapter
         holder.bind(allDish[position])
     }
 
-    class DishViewHolder(itemView: View, listener: DishListener) :
+    inner class DishViewHolder(itemView: View, listener: DishListener) :
         RecyclerView.ViewHolder(itemView) {
         var allMoney = 0
         var countFood = 0
-        lateinit var uiDishModel: UiDishModel
 
-        fun bind(uiDishModel: UiDishModel) {
-            this.uiDishModel = uiDishModel
-            val dishModel = uiDishModel.dishEntity
-            itemView.title_food.text = dishModel.title_food
-            itemView.price_food.text = "${dishModel.price_food} руб."
-            itemView.volume_food.text = "${dishModel.volume_food} гр."
+        fun bind(uiDishModel: DishModel) {
+            itemView.title_food.text = uiDishModel.title_food
+            itemView.price_food.text = "${uiDishModel.price_food} руб."
+            itemView.volume_food.text = "${uiDishModel.volume_food} гр."
 
-            if (dishModel.description_stop == "0") {
+            if (uiDishModel.description_stop == "0") {
                 itemView.description_stop_text.visibility = View.INVISIBLE
-                Picasso.get().load(dishModel.foto_food).into(itemView.foto_dish)
-                if(uiDishModel.quantity >=1){
+                Picasso.get().load(uiDishModel.foto_food).into(itemView.foto_dish)
+                countFood = uiDishModel.quantity_id_food
+                if (uiDishModel.quantity_id_food >= 1) {
                     itemView.buy_button.isClickable = false
                     itemView.buy_button.isLongClickable = false
                     itemView.buy_button.visibility = View.INVISIBLE
                     itemView.buy_const.visibility = View.VISIBLE
-                    countFood = uiDishModel.quantity
-                    itemView.count_food_text.text = uiDishModel.quantity.toString()
-                }
-                else{
+                    itemView.count_food_text.text = uiDishModel.quantity_id_food.toString()
+                } else {
                     itemView.isClickable = true
                     itemView.buy_button.isClickable = true
                     itemView.buy_button.visibility = View.VISIBLE
@@ -69,13 +65,13 @@ class DishAdapter(val listener: DishListener) : RecyclerView.Adapter<DishAdapter
             } else {
                 itemView.isClickable = false
                 itemView.buy_button.isClickable = false
-                itemView.description_stop_text.text = dishModel.description_stop
+                itemView.description_stop_text.text = uiDishModel.description_stop
                 itemView.description_stop_text.visibility = View.VISIBLE
                 itemView.buy_button.isLongClickable = false
                 itemView.buy_button.background.setTint(Color.parseColor("#D0CECE"))
                 val picasso = Picasso.get()
                 picasso
-                    .load(dishModel.foto_food)
+                    .load(uiDishModel.foto_food)
                     .transform(GrayscaleTransformation())
                     .into(itemView.foto_dish)
             }
@@ -84,7 +80,7 @@ class DishAdapter(val listener: DishListener) : RecyclerView.Adapter<DishAdapter
         init {
             itemView.setOnClickListener {
                 val intent = Intent(itemView.context, DishDetailActivity::class.java)
-                intent.putExtra("dish", uiDishModel.dishEntity.id_food)
+                intent.putExtra("dish", getDish(adapterPosition).id_food)
                 ContextCompat.startActivity(itemView.context, intent, null)
             }
             itemView.buy_button.setOnLongClickListener {
@@ -93,29 +89,29 @@ class DishAdapter(val listener: DishListener) : RecyclerView.Adapter<DishAdapter
                 true
             }
             itemView.buy_button.setOnClickListener {
-                listener.onClickDish(uiDishModel)
+                listener.onClickDish(getDish(adapterPosition))
                 itemView.buy_button.visibility = View.INVISIBLE
                 itemView.buy_const.visibility = View.VISIBLE
-                allMoney = uiDishModel.dishEntity.price_food
+                allMoney = getDish(adapterPosition).price_food
                 countFood = 1
                 itemView.count_food_text.text = countFood.toString()
 
             }
             itemView.plus_button.setOnClickListener {
-                listener.onPlusDish(uiDishModel)
+                listener.onPlusDish(getDish(adapterPosition))
 
-                allMoney += uiDishModel.dishEntity.price_food
+                allMoney += getDish(adapterPosition).price_food
                 countFood += 1
                 itemView.count_food_text.text = countFood.toString()
 
             }
             itemView.minus_button.setOnClickListener {
-                listener.onMinusDish(uiDishModel)
+                listener.onMinusDish(getDish(adapterPosition))
 
                 itemView.count_food_text.text = countFood.toString()
 
                 countFood -= 1
-                allMoney -= uiDishModel.dishEntity.price_food
+                allMoney -= getDish(adapterPosition).price_food
                 itemView.count_food_text.text = countFood.toString()
                 if (countFood == 0) {
                     itemView.buy_button.isClickable = true
@@ -126,14 +122,17 @@ class DishAdapter(val listener: DishListener) : RecyclerView.Adapter<DishAdapter
         }
     }
 
+    fun getDish(position: Int) = allDish[position]
+
+
     interface DishListener {
-        fun onClickDish(dishModel: UiDishModel)
-        fun onPlusDish(dishModel: UiDishModel)
-        fun onMinusDish(dishModel: UiDishModel)
+        fun onClickDish(dishModel: DishModel)
+        fun onPlusDish(dishModel: DishModel)
+        fun onMinusDish(dishModel: DishModel)
     }
 
 
-    fun setAllDishList(allArrayDish: ArrayList<UiDishModel>) {
+    fun setAllDishList(allArrayDish: ArrayList<DishModel>) {
         val diffCallback = DishDiffUtill(allArrayDish, allDish)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         allDish.clear()
@@ -142,8 +141,8 @@ class DishAdapter(val listener: DishListener) : RecyclerView.Adapter<DishAdapter
     }
 
     inner class DishDiffUtill(
-        private val newList: ArrayList<UiDishModel>,
-        private val oldList: ArrayList<UiDishModel>
+        private val newList: ArrayList<DishModel>,
+        private val oldList: ArrayList<DishModel>
     ) :
         DiffUtil.Callback() {
         override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int) = true

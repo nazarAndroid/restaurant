@@ -9,7 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.kilaserto.restaurantapp.R
 import com.kilaserto.restaurantapp.db.CartEntity
-import com.kilaserto.restaurantapp.model.UiDishModel
+import com.kilaserto.restaurantapp.model.DishModel
 import com.kilaserto.restaurantapp.ui.basket.BasketActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -26,18 +26,18 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         adapterDish = DishAdapter(object : DishAdapter.DishListener{
-            override fun onClickDish(uiDishModel: UiDishModel) {
+            override fun onClickDish(uiDishModel: DishModel) {
                 val currentTime: Date = Calendar.getInstance().time
-                val dish = CartEntity(uiDishModel.dishEntity.id_food,currentTime.toString(),uiDishModel.dishEntity.id_food,0,1,0 )
+                val dish = CartEntity(uiDishModel.id_food,currentTime.toString(),uiDishModel.id_food,0,1,0 )
                 viewModel.addDishToBasket(dish)
             }
 
-            override fun onPlusDish(uiDishModel: UiDishModel) {
-                viewModel.plusQuantityBasketModel(uiDishModel.dishEntity.id_food)
+            override fun onPlusDish(uiDishModel: DishModel) {
+                viewModel.plusQuantityBasketModel(uiDishModel.id_food)
             }
 
-            override fun onMinusDish(uiDishModel: UiDishModel) {
-                viewModel.minusQuantityBasketModel(uiDishModel.dishEntity.id_food)
+            override fun onMinusDish(uiDishModel: DishModel) {
+                viewModel.minusQuantityBasketModel(uiDishModel.id_food)
             }
         })
 
@@ -72,19 +72,13 @@ class HomeActivity : AppCompatActivity() {
 
     private fun observeData() {
         viewModel.mainDishes().observe(this, Observer {
+            //тут не приходить quantity
             adapterDish.setAllDishList(it)
-        })
-
-        viewModel.mainCategories().observe(this, Observer {
-            adapter.setAllCategories(it)
-        })
-
-        viewModel.mainDishesList.observe(this, Observer {
             if (it.isNotEmpty()) {
                 buy_card_view.visibility = View.VISIBLE
                 var allPrice = 0
                 it.forEach {
-                    allPrice += it.dishEntity.price_food*it.quantity
+                    allPrice += it.cost()
                 }
                 if(allPrice == 0){
                     buy_card_view.visibility = View.INVISIBLE
@@ -93,6 +87,10 @@ class HomeActivity : AppCompatActivity() {
             } else {
                 buy_card_view.visibility = View.INVISIBLE
             }
+        })
+
+        viewModel.mainCategories().observe(this, Observer {
+            adapter.setAllCategories(it)
         })
     }
 }

@@ -29,9 +29,6 @@ interface CartDao {
     fun getDishByIdBasket(id: Int): LiveData<CartEntity>
 
     @Query("SELECT * FROM cart_table WHERE id_food= :id")
-    fun getDishByIdBasketBlocking(id: Int): CartEntity?
-
-    @Query("SELECT * FROM cart_table WHERE id_food= :id")
     fun getDishById(id: Int): CartEntity
 
     @Query("DELETE FROM cart_table WHERE id_food= :id")
@@ -40,6 +37,6 @@ interface CartDao {
     @Query("SELECT EXISTS (SELECT 1 FROM cart_table WHERE id_food = :id)")
     fun checkFoodOnTable(id: Int): LiveData<Boolean>
 
-    @Query("select * from cart_table")
+    @Transaction @Query("select * from cart_table")
     fun getCartItemsWithDish(): LiveData<List<CartWithDishItem>>
 }
